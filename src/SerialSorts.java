@@ -1,4 +1,4 @@
-public class Sorts {
+public class SerialSorts {
     public static void serialMergeSort(int[] a, int n) {
         if (n < 2) {
             return;
@@ -6,27 +6,26 @@ public class Sorts {
         int mid = n / 2;
         int[] left = new int[mid];
         int[] right = new int[n - mid];
-
         for (int i = 0; i < mid; i++) {
             left[i] = a[i];
         }
-        for (int i = mid; i < mid; i++) {
+        for (int i = mid; i < n; i++) {
             right[i - mid] = a[i];
         }
 
         serialMergeSort(left, mid);
         serialMergeSort(right, n - mid);
 
-        merge(a, left, right, n, mid);
+        merge(a, left, right, mid, n - mid);
     }
 
     private static void merge(int[] a, int[] left, int[] right, int leftSize, int rightSize) {
         int i = 0, j = 0, k = 0;
         while (i < leftSize && j < rightSize) {
             if (left[i] <= right[j]) {
-                a[k++] = left[k++];
+                a[k++] = left[i++];
             } else {
-                a[k++] = right[k++];
+                a[k++] = right[j++];
             }
         }
 
@@ -35,7 +34,7 @@ public class Sorts {
         }
 
         while (j < rightSize) {
-            a[k++] = left[j++];
+            a[k++] = right[j++];
         }
     }
 
@@ -97,44 +96,24 @@ public class Sorts {
             a[i] = temp;
         }
     }
+    public static void main(String[] args) {
+        int[] example = {10, 9, 2, 11, 5};
+        for (int i : example) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+        long start = System.nanoTime();
+        //serialMergeSort(example, example.length);
+        //serialBubbleSort(example);
+        //serialQuickSort(example, 0, example.length - 1);
+        serialSelectionSort(example);
+        long total = System.nanoTime() - start;
 
-    //TODO paralelizar o Merge Sort
-    public static void parallelMergeSort() {
-        // Particionamento
-        // Comunicação
-        // Algomeração
-        // Mapeamento
-    }
+        for (int i : example) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
 
-    //TODO paralelizar o Bubble Sort
-    public static void parallelBubbleSort() {
-        // Particionamento
-        // Comunicação
-        // Algomeração
-        // Mapeamento
-    }
-
-    //TODO paralelizar o Quick Sort
-    public static void parallelQuickSort() {
-        // Particionamento
-        // Comunicação
-        // Algomeração
-        // Mapeamento
-    }
-
-    //TODO paralelizar o Selection Sort
-    public static void parallelSelectionSort() {
-        // Particionamento
-        // Comunicação
-        // Algomeração
-        // Mapeamento
-    }
-
-    // TODO Auto-generated method stub
-    public static void parallelBubbleSort(int[] a) {
-         // Particionamento
-        // Comunicação
-        // Algomeração
-        // Mapeamento
+        System.out.println("TEMPO TOTAL: " + total);
     }
 }
