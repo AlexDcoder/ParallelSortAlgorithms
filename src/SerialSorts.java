@@ -1,17 +1,16 @@
+import java.util.Random;
+
 public class SerialSorts {
+
     public static void serialMergeSort(int[] a, int n) {
-        if (n < 2) {
-            return;
-        }
+        if (n < 2) return;
+        
         int mid = n / 2;
         int[] left = new int[mid];
         int[] right = new int[n - mid];
-        for (int i = 0; i < mid; i++) {
-            left[i] = a[i];
-        }
-        for (int i = mid; i < n; i++) {
-            right[i - mid] = a[i];
-        }
+        
+        System.arraycopy(a, 0, left, 0, mid);
+        System.arraycopy(a, mid, right, 0, n - mid);
 
         serialMergeSort(left, mid);
         serialMergeSort(right, n - mid);
@@ -22,27 +21,16 @@ public class SerialSorts {
     private static void merge(int[] a, int[] left, int[] right, int leftSize, int rightSize) {
         int i = 0, j = 0, k = 0;
         while (i < leftSize && j < rightSize) {
-            if (left[i] <= right[j]) {
-                a[k++] = left[i++];
-            } else {
-                a[k++] = right[j++];
-            }
+            a[k++] = (left[i] <= right[j]) ? left[i++] : right[j++];
         }
-
-        while (i < leftSize) {
-            a[k++] = left[i++];
-        }
-
-        while (j < rightSize) {
-            a[k++] = right[j++];
-        }
+        while (i < leftSize) a[k++] = left[i++];
+        while (j < rightSize) a[k++] = right[j++];
     }
 
     public static void serialBubbleSort(int[] a) {
         int n = a.length;
-        boolean swapped;
         for (int i = 0; i < n; i++) {
-            swapped = false;
+            boolean swapped = false;
             for (int j = 0; j < n - i - 1; j++) {
                 if (a[j] > a[j + 1]) {
                     int temp = a[j];
@@ -51,9 +39,7 @@ public class SerialSorts {
                     swapped = true;
                 }
             }
-            if (!swapped) {
-                break;
-            }
+            if (!swapped) break;
         }
     }
 
@@ -96,24 +82,56 @@ public class SerialSorts {
             a[i] = temp;
         }
     }
+
+      // Test each sorting algorithm and measure the time taken
+    public static void testSortingAlgorithms(int[] array) {
+        int[] mergeSortArray = array.clone();
+        int[] bubbleSortArray = array.clone();
+        int[] quickSortArray = array.clone();
+        int[] selectionSortArray = array.clone();
+
+        long start, time;
+
+        // Merge Sort Timing
+        start = System.nanoTime();
+        serialMergeSort(mergeSortArray, mergeSortArray.length);
+        time = System.nanoTime() - start;
+        System.out.println("Merge Sort time (" + array.length + " elements): " + time + " ns");
+
+        // Bubble Sort Timing
+        start = System.nanoTime();
+        serialBubbleSort(bubbleSortArray);
+        time = System.nanoTime() - start;
+        System.out.println("Bubble Sort time (" + array.length + " elements): " + time + " ns");
+
+        // Quick Sort Timing
+        start = System.nanoTime();
+        serialQuickSort(quickSortArray, 0, quickSortArray.length - 1);
+        time = System.nanoTime() - start;
+        System.out.println("Quick Sort time (" + array.length + " elements): " + time + " ns");
+
+        // Selection Sort Timing
+        start = System.nanoTime();
+        serialSelectionSort(selectionSortArray);
+        time = System.nanoTime() - start;
+        System.out.println("Selection Sort time (" + array.length + " elements): " + time + " ns");
+    }
+
+    // Main function to initialize arrays of different sizes and test sorting algorithms
     public static void main(String[] args) {
-        int[] example = {10, 9, 2, 11, 5};
-        for (int i : example) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
-        long start = System.nanoTime();
-        //serialMergeSort(example, example.length);
-        //serialBubbleSort(example);
-        //serialQuickSort(example, 0, example.length - 1);
-        serialSelectionSort(example);
-        long total = System.nanoTime() - start;
+        // Generate random arrays of different sizes
+        int[] array10 = new Random().ints(10, 0, 100).toArray();
+        int[] array100 = new Random().ints(100, 0, 1000).toArray();
+        int[] array1000 = new Random().ints(1000, 0, 10000).toArray();
 
-        for (int i : example) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
+        // Testing each array with all sorting algorithms
+        System.out.println("Testing with array of 10 elements:");
+        testSortingAlgorithms(array10);
 
-        System.out.println("TEMPO TOTAL: " + total);
+        System.out.println("\nTesting with array of 100 elements:");
+        testSortingAlgorithms(array100);
+
+        System.out.println("\nTesting with array of 1000 elements:");
+        testSortingAlgorithms(array1000);
     }
 }
