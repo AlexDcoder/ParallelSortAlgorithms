@@ -115,6 +115,8 @@ public class SerialSorts {
         serialSelectionSort(selectionSortArray);
         time = System.nanoTime() - start;
         System.out.println("Selection Sort time (" + array.length + " elements): " + time + " ns");
+        System.out.println("--------------------------------------------------\n");
+
     }
 
     // Main function to initialize arrays of different sizes and test sorting algorithms
@@ -123,6 +125,7 @@ public class SerialSorts {
         int[] array10 = new Random().ints(10, 0, 100).toArray();
         int[] array100 = new Random().ints(100, 0, 1000).toArray();
         int[] array1000 = new Random().ints(1000, 0, 10000).toArray();
+        System.out.println("Comparing Serial Sorting Algorithms with Varying Array Sizes\n");
 
         // Testing each array with all sorting algorithms
         System.out.println("Testing with array of 10 elements:");
@@ -133,5 +136,6 @@ public class SerialSorts {
 
         System.out.println("\nTesting with array of 1000 elements:");
         testSortingAlgorithms(array1000);
+    
     }
 }
