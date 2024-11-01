@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
 public class SerialSorts {
@@ -84,39 +86,58 @@ public class SerialSorts {
     }
 
       // Test each sorting algorithm and measure the time taken
-    public static void testSortingAlgorithms(int[] array) {
+    public static String[] testSortingAlgorithms(int[] array) {
         int[] mergeSortArray = array.clone();
         int[] bubbleSortArray = array.clone();
         int[] quickSortArray = array.clone();
         int[] selectionSortArray = array.clone();
 
-        long start, time;
+        long start, totalMerge, totalBubble, totalSelection, totalQuick;
 
         // Merge Sort Timing
         start = System.nanoTime();
         serialMergeSort(mergeSortArray, mergeSortArray.length);
-        time = System.nanoTime() - start;
-        System.out.println("Merge Sort time (" + array.length + " elements): " + time + " ns");
+        totalMerge = System.nanoTime() - start;
+        System.out.println("Merge Sort time (" + array.length + " elements): " + totalMerge + " ns");
 
         // Bubble Sort Timing
         start = System.nanoTime();
         serialBubbleSort(bubbleSortArray);
-        time = System.nanoTime() - start;
-        System.out.println("Bubble Sort time (" + array.length + " elements): " + time + " ns");
+        totalBubble = System.nanoTime() - start;
+        System.out.println("Bubble Sort time (" + array.length + " elements): " + totalBubble + " ns");
 
         // Quick Sort Timing
         start = System.nanoTime();
         serialQuickSort(quickSortArray, 0, quickSortArray.length - 1);
-        time = System.nanoTime() - start;
-        System.out.println("Quick Sort time (" + array.length + " elements): " + time + " ns");
+        totalQuick = System.nanoTime() - start;
+        System.out.println("Quick Sort time (" + array.length + " elements): " + totalQuick + " ns");
 
         // Selection Sort Timing
         start = System.nanoTime();
         serialSelectionSort(selectionSortArray);
-        time = System.nanoTime() - start;
-        System.out.println("Selection Sort time (" + array.length + " elements): " + time + " ns");
+        totalSelection = System.nanoTime() - start;
+        System.out.println("Selection Sort time (" + array.length + " elements): " + totalSelection + " ns");
         System.out.println("--------------------------------------------------\n");
 
+        return new String[] {
+            String.format("%d", array.length),
+            String.format("%d", totalMerge),
+            String.format("%d", totalBubble),
+            String.format("%d", totalQuick),
+            String.format("%d", totalSelection),
+        };
+    }
+
+    private static void writeLine(FileWriter writer, String[] values) throws IOException {
+        StringBuilder line = new StringBuilder();
+        for (int i = 0; i < values.length; i++) {
+            line.append(values[i]);
+            if (i < values.length - 1) {
+                line.append(",");
+            }
+        }
+        line.append("\n");
+        writer.write(line.toString());
     }
 
     // Main function to initialize arrays of different sizes and test sorting algorithms
@@ -125,17 +146,35 @@ public class SerialSorts {
         int[] array10 = new Random().ints(10, 0, 100).toArray();
         int[] array100 = new Random().ints(100, 0, 1000).toArray();
         int[] array1000 = new Random().ints(1000, 0, 10000).toArray();
-        System.out.println("Comparing Serial Sorting Algorithms with Varying Array Sizes\n");
+        int[] array10000 = new Random().ints(10000, 0, 10000).toArray();
+        
+        String[][] data = new String[4][];
 
+        String PATH = "serial_total.csv";
+
+        System.out.println("Comparing Serial Sorting Algorithms with Varying Array Sizes\n");
+        
         // Testing each array with all sorting algorithms
         System.out.println("Testing with array of 10 elements:");
-        testSortingAlgorithms(array10);
+        data[0] = testSortingAlgorithms(array10);
 
         System.out.println("\nTesting with array of 100 elements:");
-        testSortingAlgorithms(array100);
+        data[1] = testSortingAlgorithms(array100);
 
         System.out.println("\nTesting with array of 1000 elements:");
-        testSortingAlgorithms(array1000);
-    
+        data[2] = testSortingAlgorithms(array1000);
+        
+        System.out.println("\nTesting with array of 10000 elements:");
+        data[3] = testSortingAlgorithms(array10000);
+        
+        try (FileWriter writer = new FileWriter(PATH)) {
+            //Writing the line with data
+            for (String[] row : data) {
+                writeLine(writer, row);
+            }
+            
+        } catch (IOException e) {
+            System.out.println("Erro while writing CSV: " + e.getMessage());
+        }
     }
 }
