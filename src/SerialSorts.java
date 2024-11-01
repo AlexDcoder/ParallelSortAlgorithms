@@ -1,5 +1,6 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 
 public class SerialSorts {
@@ -86,46 +87,54 @@ public class SerialSorts {
     }
 
       // Test each sorting algorithm and measure the time taken
-    public static String[] testSortingAlgorithms(int[] array) {
+    public static String[] testSortingAlgorithms(int[] array, int qtdTests) {
         int[] mergeSortArray = array.clone();
         int[] bubbleSortArray = array.clone();
         int[] quickSortArray = array.clone();
         int[] selectionSortArray = array.clone();
 
-        long start, totalMerge, totalBubble, totalSelection, totalQuick;
+        long start, end;
+        long[] totalMerge = new long[qtdTests], totalBubble = new long[qtdTests], totalSelection = new long[qtdTests], totalQuick = new long[qtdTests];
 
-        // Merge Sort Timing
-        start = System.nanoTime();
-        serialMergeSort(mergeSortArray, mergeSortArray.length);
-        totalMerge = System.nanoTime() - start;
-        System.out.println("Merge Sort time (" + array.length + " elements): " + totalMerge + " ns");
 
-        // Bubble Sort Timing
-        start = System.nanoTime();
-        serialBubbleSort(bubbleSortArray);
-        totalBubble = System.nanoTime() - start;
-        System.out.println("Bubble Sort time (" + array.length + " elements): " + totalBubble + " ns");
+        for (int i = 0; i < qtdTests; i++) {
+            // Merge Sort Timing
+            start = System.nanoTime();
+            serialMergeSort(mergeSortArray, mergeSortArray.length);
+            end = System.nanoTime() - start;
+            System.out.println("Merge Sort time (" + array.length + " elements): " + end + " ns");
+            totalMerge[i] = end;
 
-        // Quick Sort Timing
-        start = System.nanoTime();
-        serialQuickSort(quickSortArray, 0, quickSortArray.length - 1);
-        totalQuick = System.nanoTime() - start;
-        System.out.println("Quick Sort time (" + array.length + " elements): " + totalQuick + " ns");
+            // Bubble Sort Timing
+            start = System.nanoTime();
+            serialBubbleSort(bubbleSortArray);
+            end = System.nanoTime() - start;
+            System.out.println("Bubble Sort time (" + array.length + " elements): " + end + " ns");
+            totalBubble[i] = end;
 
-        // Selection Sort Timing
-        start = System.nanoTime();
-        serialSelectionSort(selectionSortArray);
-        totalSelection = System.nanoTime() - start;
-        System.out.println("Selection Sort time (" + array.length + " elements): " + totalSelection + " ns");
-        System.out.println("--------------------------------------------------\n");
+            // Quick Sort Timing
+            start = System.nanoTime();
+            serialQuickSort(quickSortArray, 0, quickSortArray.length - 1);
+            end = System.nanoTime() - start;
+            System.out.println("Quick Sort time (" + array.length + " elements): " + end + " ns");
+            totalQuick[i] = end;
 
+            // Selection Sort Timing
+            start = System.nanoTime();
+            serialSelectionSort(selectionSortArray);
+            end = System.nanoTime() - start;
+            System.out.println("Selection Sort time (" + array.length + " elements): " + end + " ns");
+            System.out.println("--------------------------------------------------\n");
+            totalSelection[i] = end;   
+        }
+    
         return new String[] {
-            String.format("%d", array.length),
-            String.format("%d", totalMerge),
-            String.format("%d", totalBubble),
-            String.format("%d", totalQuick),
-            String.format("%d", totalSelection),
-        };
+                    String.format("%d", array.length),
+                    String.format("%d", (long) Arrays.stream(totalMerge).average().orElse(0)),
+                    String.format("%d", (long) Arrays.stream(totalBubble).average().orElse(0)),
+                    String.format("%d", (long) Arrays.stream(totalQuick).average().orElse(0)),
+                    String.format("%d", (long) Arrays.stream(totalSelection).average().orElse(0)),
+            };
     }
 
     private static void writeLine(FileWriter writer, String[] values) throws IOException {
@@ -141,7 +150,10 @@ public class SerialSorts {
     }
 
     // Main function to initialize arrays of different sizes and test sorting algorithms
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
+
+        int NUMTESTS = 10;
+
         // Generate random arrays of different sizes
         int[] array10 = new Random().ints(10, 0, 100).toArray();
         int[] array100 = new Random().ints(100, 0, 1000).toArray();
@@ -156,16 +168,16 @@ public class SerialSorts {
         
         // Testing each array with all sorting algorithms
         System.out.println("Testing with array of 10 elements:");
-        data[0] = testSortingAlgorithms(array10);
+        data[0] = testSortingAlgorithms(array10, NUMTESTS);
 
         System.out.println("\nTesting with array of 100 elements:");
-        data[1] = testSortingAlgorithms(array100);
+        data[1] = testSortingAlgorithms(array100, NUMTESTS);
 
         System.out.println("\nTesting with array of 1000 elements:");
-        data[2] = testSortingAlgorithms(array1000);
+        data[2] = testSortingAlgorithms(array1000, NUMTESTS);
         
         System.out.println("\nTesting with array of 10000 elements:");
-        data[3] = testSortingAlgorithms(array10000);
+        data[3] = testSortingAlgorithms(array10000, NUMTESTS);
         
         try (FileWriter writer = new FileWriter(PATH)) {
             //Writing the line with data
