@@ -11,7 +11,7 @@ public class MainParallelSorts {
     private static final String PATH = "parallel_total.csv";
     private static final int NUMTESTS = 10;
 
-    public static void main(String[] args) throws InterruptedException, ExecutionException {
+    public static void main1(String[] args) throws InterruptedException, ExecutionException {
         System.out.println("Comparing Parallel Sorting Algorithms with Varying Array Sizes\n");
 
         long[] totalMerge = new long[NUMTESTS], totalBubble = new long[NUMTESTS], totalSelection = new long[NUMTESTS], totalQuick = new long[NUMTESTS];
